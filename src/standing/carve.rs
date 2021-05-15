@@ -1,8 +1,9 @@
 use crate::standing::result::{TableResult, Team};
 use crate::standing::StandingList;
+use eyre::Result;
 use std::io;
 
-pub async fn fetch_standing(standing_id: String) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn fetch_standing(standing_id: String) -> Result<()> {
     let url = format!(
         "https://api.varzesh3.com/v2.0/leaguestat/widget/5/{}",
         standing_id
@@ -15,7 +16,7 @@ pub async fn fetch_standing(standing_id: String) -> Result<(), Box<dyn std::erro
     Ok(())
 }
 
-pub fn print_standings_list() -> Result<(), Box<dyn std::error::Error>> {
+pub fn print_standings_list() -> Result<()> {
     let leagues = StandingList::get_leagues()?;
     let items = leagues
         .iter()
@@ -31,10 +32,7 @@ pub fn print_standings_list() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-pub fn print_standings_table(
-    teams: Vec<Team>,
-    standings_url: String,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn print_standings_table(teams: Vec<Team>, standings_url: String) -> Result<()> {
     let mut position = 1;
     let items = teams
         .iter()
@@ -61,7 +59,7 @@ pub fn print_standings_table(
     Ok(())
 }
 
-async fn scrape_table(url: &str) -> Result<(Vec<Team>, String), Box<dyn std::error::Error>> {
+async fn scrape_table(url: &str) -> Result<(Vec<Team>, String)> {
     let res = reqwest::get(url).await?.text().await?;
 
     let r: TableResult = serde_json::from_str(&res)?;

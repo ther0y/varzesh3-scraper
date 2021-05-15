@@ -1,4 +1,5 @@
 use crate::utils::article::Article;
+use eyre::Result;
 use std::io;
 
 pub struct News {
@@ -10,7 +11,7 @@ impl News {
         News { articles }
     }
 
-    pub fn print_for_alfred(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn print_for_alfred(&self) -> Result<()> {
         let items = self
             .articles
             .iter()
@@ -28,7 +29,7 @@ impl News {
             .into_item();
     }
 
-    fn print_items(items: Vec<alfred::Item<'_>>) -> Result<(), Box<dyn std::error::Error>> {
+    fn print_items(items: Vec<alfred::Item<'_>>) -> Result<()> {
         alfred::json::write_items(io::stdout(), &items)?;
         Ok(())
     }

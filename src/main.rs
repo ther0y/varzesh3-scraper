@@ -1,12 +1,13 @@
 mod standing;
 mod utils;
 
+use eyre::Result;
 use standing::{fetch_standing, print_standings_list};
 use std::env;
 use utils::{fetch_latest_news, fetch_slider_items, search};
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
 
     match args.len() {

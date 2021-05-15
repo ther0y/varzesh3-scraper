@@ -1,3 +1,4 @@
+use eyre::Result;
 use serde::{Deserialize, Serialize};
 
 const JSON_DATA: &str = r#"
@@ -45,8 +46,8 @@ pub struct StandingList {
 }
 
 impl StandingList {
-    pub fn get_leagues() -> Result<Vec<StandingListItem>, Box<dyn std::error::Error>> {
-        let list: StandingList = serde_json::from_str(JSON_DATA).expect("failed to parse");
+    pub fn get_leagues() -> Result<Vec<StandingListItem>> {
+        let list: StandingList = serde_json::from_str(JSON_DATA)?;
         Ok(list.leagues)
     }
 }
