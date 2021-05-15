@@ -1,8 +1,8 @@
-use std::io;
 use crate::utils::article::Article;
+use std::io;
 
 pub struct News {
-    pub articles: Vec<Article>
+    pub articles: Vec<Article>,
 }
 
 impl News {
@@ -10,8 +10,12 @@ impl News {
         News { articles }
     }
 
-    pub fn print_for_alfred(&self) -> Result<(), Box<dyn std::error::Error>>{
-        let items = self.articles.iter().map(News::create_item).collect::<Vec<alfred::Item<'_>>>();
+    pub fn print_for_alfred(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let items = self
+            .articles
+            .iter()
+            .map(News::create_item)
+            .collect::<Vec<alfred::Item<'_>>>();
         News::print_items(items)?;
         Ok(())
     }

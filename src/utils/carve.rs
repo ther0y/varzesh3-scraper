@@ -1,4 +1,4 @@
-use crate::utils::{News, Article};
+use crate::utils::{Article, News};
 use scraper::{Html, Selector};
 
 pub async fn fetch_latest_news() -> Result<(), Box<dyn std::error::Error>> {
@@ -34,17 +34,19 @@ async fn scrape_news(url: &str, select_path: &str) -> Result<News, Box<dyn std::
 
     let ul = fragment.select(&selector);
 
-    let articles = ul.map(|elem| {
-        let link = format!(
-            "{}{}",
-            "https://www.varzesh3.com",
-            elem.value().attr("href").unwrap()
-        );
+    let articles = ul
+        .map(|elem| {
+            let link = format!(
+                "{}{}",
+                "https://www.varzesh3.com",
+                elem.value().attr("href").unwrap()
+            );
 
-        let title = elem.text().next().unwrap().to_string();
-    
-        Article::create(title, link)
-    }).collect();
+            let title = elem.text().next().unwrap().to_string();
+
+            Article::create(title, link)
+        })
+        .collect();
 
     Ok(News::from_articles(articles))
 }
