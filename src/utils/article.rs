@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct Article {
     pub title: String,
     pub link: String,

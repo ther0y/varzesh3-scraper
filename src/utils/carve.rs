@@ -1,10 +1,44 @@
+use std::{
+    sync::{Arc, Mutex},
+    thread,
+    time::Duration,
+};
+
 use crate::utils::{Article, News};
 use eyre::Result;
+
 use scraper::{Html, Selector};
 
 pub async fn fetch_latest_news() -> Result<()> {
     let news = scrape_news("https://www.varzesh3.com/", "#widget3 li a").await?;
-    news.print_for_alfred()?;
+    //news.print_for_alfred()?;
+
+    let mut handles = Vec::new();
+    let chunks = news.articles.as_slice()[0..48].to_vec();
+    let responses: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
+
+    for article in chunks {
+        // Spawn a thread and fetch article details
+        // Caution: Do Not DDOS Them!
+
+        let rsps = responses.clone();
+
+        let handle = thread::spawn(move || {
+            let d = reqwest::blocking::get(&article.link)
+                .expect("err")
+                .text()
+                .expect("dcsd");
+
+            rsps.lock().unwrap().push(d);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("{}", responses.clone().lock().unwrap().len());
 
     Ok(())
 }
@@ -50,4 +84,15 @@ async fn scrape_news(url: &str, select_path: &str) -> Result<News> {
         .collect();
 
     Ok(News::from_articles(articles))
+}
+
+pub async fn fetch_article_image(url: &str) -> Result<String> {
+    let res = reqwest::get(url)
+        .await
+        .expect("c")
+        .text()
+        .await
+        .expect("sdcsd");
+
+    Ok(res)
 }

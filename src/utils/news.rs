@@ -22,11 +22,11 @@ impl News {
     }
 
     pub fn create_item(article: &Article) -> alfred::Item<'_> {
-        return alfred::ItemBuilder::new(&article.title)
+        alfred::ItemBuilder::new(&article.title)
             .subtitle(&article.link)
             .quicklook_url(&article.link)
             .variable("url", &article.link)
-            .into_item();
+            .into_item()
     }
 
     fn print_items(items: Vec<alfred::Item<'_>>) -> Result<()> {
